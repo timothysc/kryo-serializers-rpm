@@ -1,25 +1,16 @@
 %global with_wicket 0
 Name:          kryo-serializers
-Version:       0.23
-Release:       4%{?dist}
+Version:       0.26
+Release:       1%{?dist}
 Summary:       Additional kryo serializers
 License:       ASL 2.0
 URL:           https://github.com/magro/kryo-serializers
-Source0:       %{name}-%{version}-clean.tar.gz
-Source1:       generate-tarball.sh
-
-# NOTE: clean sources have src/test/java/de/javakaffee/kryoserializers/cglib removed due 
-# to licensing issue, upstream ticket has been opened. 
-# Once issue has been resolved, sources may be grab'd from upstream.
-# Source0:       https://github.com/magro/%{name}/archive/%{name}-%{version}.tar.gz
+Source0:       https://github.com/magro/%{name}/archive/%{name}-%{version}.tar.gz
 
 BuildRequires: java-devel
 
-BuildRequires: mvn(asm:asm)
 BuildRequires: mvn(cglib:cglib)
 BuildRequires: mvn(com.esotericsoftware.kryo:kryo)
-BuildRequires: mvn(com.esotericsoftware.minlog:minlog)
-BuildRequires: mvn(com.esotericsoftware.reflectasm:reflectasm)
 BuildRequires: mvn(joda-time:joda-time)
 BuildRequires: mvn(org.sonatype.oss:oss-parent)
 
@@ -33,7 +24,6 @@ BuildRequires: mvn(org.jboss.spec.javax.servlet:jboss-servlet-api_2.5_spec)
 %endif
 BuildRequires: mvn(commons-lang:commons-lang)
 BuildRequires: mvn(junit:junit)
-BuildRequires: mvn(org.objenesis:objenesis)
 BuildRequires: mvn(org.slf4j:slf4j-api)
 BuildRequires: mvn(org.slf4j:slf4j-simple)
 BuildRequires: mvn(org.testng:testng)
@@ -73,15 +63,6 @@ sed -i "s|<artifactId>servlet-api|<artifactId>jboss-servlet-api_2.5_spec|" pom.x
 sed -i "s|<artifactId>wicket|<artifactId>wicket-core|" pom.xml
 %endif
 
-# package com.esotericsoftware.minlog does not exist
-%pom_add_dep com.esotericsoftware.minlog:minlog::provided
-%pom_add_dep com.esotericsoftware.reflectasm:reflectasm::provided
-# NoClassDefFoundError: org/objenesis/instantiator/ObjectInstantiator
-%pom_add_dep org.objenesis:objenesis::test
-
-# remove shaded plugin artifact.
-sed -i "s|<classifier>shaded</classifier>| |" pom.xml
-
 %build
 
 %mvn_file de.javakaffee:%{name} %{name}
@@ -97,6 +78,9 @@ sed -i "s|<classifier>shaded</classifier>| |" pom.xml
 %doc LICENCE.txt
 
 %changelog
+* Wed Oct 9 2013 Timothy St. Clair <tstclair@redhat.com> 0.26-1
+- Update to the latest version which fixes licensing and dependency issues
+
 * Tue Oct 8 2013 Timothy St. Clair <tstclair@redhat.com> 0.23-4
 - Update source line from review with comment on change
 
